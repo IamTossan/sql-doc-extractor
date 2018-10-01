@@ -15,6 +15,7 @@ line* makeLine(char *text) {
     line *l = malloc(sizeof(line));
     l->text = strdup(text);
     l->next = NULL;
+    l->text[strlen(l->text) - 1] = '\0';
     return l;
 }
 
@@ -40,17 +41,67 @@ void deleteLines(line *start) {
 typedef struct docTree {
     char *key;
     char *type;
+    char *value;
     struct docTree *children;
     struct docTree *next;
 } docTree;
 
-docTree* makeDocTree(char *key, char *type) {
+docTree* makeDocTree(char *key, char *type, char *value) {
     docTree *i = malloc(sizeof(docTree));
     i->key = strdup(key);
-    i->type = strdup(type);
+    i->type = NULL;
+    i->value = strdup(value);
     i->children = NULL;
     i->next = NULL;
     return i;
+}
+
+docTree* lineToDocTree(line *startLine) {
+    docTree *start = NULL;
+    docTree *current = NULL;
+    docTree *i = NULL;
+
+    line *l = startLine;
+
+    while(l != NULL) {
+        char *key = strtok(strdup(l->text), ":");
+        char *value = (l->text) + strlen(key) + 2;
+
+        i = makeDocTree(key, NULL, value);
+        if(!start) {
+            start = i;
+            current = i;
+        } else {
+            current->next = i;
+            current = i;
+        }
+
+        l = l->next;
+    }
+    return start;
+}
+
+void displayDocTree(docTree *start) {
+    docTree *current = start;
+    while(current != NULL) {
+        printf("key: %s, value: %s \n", current->key, current->value);
+        current = current->next;
+    }
+}
+
+void toJson(docTree *start) {
+    docTree *i = start;
+
+    printf("{");
+
+    while(i != NULL) {
+        printf("\n\t\"%s\": \"%s\"", i->key, i->value);
+        if(i->next != NULL) {
+            printf(",");
+        }
+        i = i->next;
+    }
+    printf("\n}\n");
 }
 
 int main(int argc, char const *argv[]) {
@@ -86,7 +137,11 @@ int main(int argc, char const *argv[]) {
         }
     }
 
-    displayLines(start);
+    // displayLines(start);
+
+    docTree *startDocTree = lineToDocTree(start);
+    // displayDocTree(startDocTree);
+    toJson(startDocTree);
 
     fclose(inputFile);
     deleteLines(start);
