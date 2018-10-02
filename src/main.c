@@ -27,7 +27,7 @@ void displayLines(line *start) {
     }
 }
 
-void deleteLines(line *start) {
+void freeLines(line *start) {
     line *current = start;
     while(current != NULL) {
         line *next = current->next;
@@ -64,7 +64,7 @@ docTree* lineToDocTree(line *startLine) {
     line *l = startLine;
 
     while(l != NULL) {
-        char *key = strtok(strdup(l->text), ":");
+        char *key = strtok(l->text, ":");
         char *value = (l->text) + strlen(key) + 2;
 
         i = makeDocTree(key, NULL, value);
@@ -86,6 +86,19 @@ void displayDocTree(docTree *start) {
     while(current != NULL) {
         printf("key: %s, value: %s \n", current->key, current->value);
         current = current->next;
+    }
+}
+
+void freeDocTree(docTree *start) {
+    docTree *current = start;
+    while(current != NULL) {
+        free(current->key);
+        free(current->type);
+        free(current->value);
+        free(current->children);
+        docTree *next = current->next;
+        free(current);
+        current = next;
     }
 }
 
@@ -144,6 +157,7 @@ int main(int argc, char const *argv[]) {
     toJson(startDocTree);
 
     fclose(inputFile);
-    deleteLines(start);
+    freeLines(start);
+    freeDocTree(startDocTree);
     return 0;
 }
