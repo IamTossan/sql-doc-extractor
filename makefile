@@ -1,2 +1,5 @@
+CC=gcc
+CFLAGS=-I/src/include
+
 sqlDocExtractor: src/main.c
-	gcc src/main.c -o dist/sqlDocExtractor
+	$(CC) $(CFLAGS) src/include/custom-types.c src/main.c -o dist/sqlDocExtractor

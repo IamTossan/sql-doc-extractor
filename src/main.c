@@ -2,120 +2,10 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "include/custom-types.h"
+
 const char delimiter[9] = "--  ====";
 const int max_line_length = 100;
-
-// extractedDoc
-typedef struct line {
-    char *text;
-    struct line *next;
-} line;
-
-line* makeLine(char *text) {
-    line *l = malloc(sizeof(line));
-    l->text = strdup(text);
-    l->next = NULL;
-    l->text[strlen(l->text) - 1] = '\0';
-    return l;
-}
-
-void displayLines(line *start) {
-    line *current = start;
-    while(current != NULL) {
-        printf("%s", current->text);
-        current = current->next;
-    }
-}
-
-void freeLines(line *start) {
-    line *current = start;
-    while(current != NULL) {
-        line *next = current->next;
-        free(current->text);
-        free(current);
-        current = next;
-    }
-}
-
-//docTree
-typedef struct docTree {
-    char *key;
-    char *type;
-    char *value;
-    struct docTree *children;
-    struct docTree *next;
-} docTree;
-
-docTree* makeDocTree(char *key, char *type, char *value) {
-    docTree *i = malloc(sizeof(docTree));
-    i->key = strdup(key);
-    i->type = NULL;
-    i->value = strdup(value);
-    i->children = NULL;
-    i->next = NULL;
-    return i;
-}
-
-docTree* lineToDocTree(line *startLine) {
-    docTree *start = NULL;
-    docTree *current = NULL;
-    docTree *i = NULL;
-
-    line *l = startLine;
-
-    while(l != NULL) {
-        char *key = strtok(l->text, ":");
-        char *value = (l->text) + strlen(key) + 2;
-
-        i = makeDocTree(key, NULL, value);
-        if(!start) {
-            start = i;
-            current = i;
-        } else {
-            current->next = i;
-            current = i;
-        }
-
-        l = l->next;
-    }
-    return start;
-}
-
-void displayDocTree(docTree *start) {
-    docTree *current = start;
-    while(current != NULL) {
-        printf("key: %s, value: %s \n", current->key, current->value);
-        current = current->next;
-    }
-}
-
-void freeDocTree(docTree *start) {
-    docTree *current = start;
-    while(current != NULL) {
-        free(current->key);
-        free(current->type);
-        free(current->value);
-        free(current->children);
-        docTree *next = current->next;
-        free(current);
-        current = next;
-    }
-}
-
-void toJson(docTree *start) {
-    docTree *i = start;
-
-    printf("{");
-
-    while(i != NULL) {
-        printf("\n\t\"%s\": \"%s\"", i->key, i->value);
-        if(i->next != NULL) {
-            printf(",");
-        }
-        i = i->next;
-    }
-    printf("\n}\n");
-}
 
 int main(int argc, char const *argv[]) {
     if(argc != 2) {
@@ -152,12 +42,12 @@ int main(int argc, char const *argv[]) {
 
     // displayLines(start);
 
-    docTree *startDocTree = lineToDocTree(start);
-    // displayDocTree(startDocTree);
-    toJson(startDocTree);
+    docNode *startDocNode = lineToDocNode(start);
+    // displayDocNode(startDocNode);
+    toJson(startDocNode);
 
     fclose(inputFile);
     freeLines(start);
-    freeDocTree(startDocTree);
+    freeDocNode(startDocNode);
     return 0;
 }
