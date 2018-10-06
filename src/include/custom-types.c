@@ -6,6 +6,24 @@
 
 // extractedDoc methods
 
+int countLineWhiteSpaces(line *l) {
+    int count = 0;
+    int i = 0;
+    while(l->text[i] == ' ') {
+        count++;
+        i++;
+    }
+    return count;
+}
+
+int countStringWhiteSpace(char *s) {
+    int i = 0;
+    while(s[i] == ' ') {
+        i++;
+    }
+    return i;
+}
+
 line* makeLine(char *text) {
     line *l = malloc(sizeof(line));
     l->text = strdup(text);
@@ -17,7 +35,7 @@ line* makeLine(char *text) {
 void displayLines(line *start) {
     line *current = start;
     while(current != NULL) {
-        printf("%s", current->text);
+        printf("%s\n", current->text);
         current = current->next;
     }
 }
@@ -36,12 +54,14 @@ docNode* lineToDocNode(line *startLine) {
     docNode *start = NULL;
     docNode *current = NULL;
     docNode *i = NULL;
+    docNode *parentNode = NULL;
 
     line *l = startLine;
 
     while(l != NULL) {
-        char *key = strtok(l->text, ":");
-        char *value = (l->text) + strlen(key) + 2;
+        char *text = strdup(l->text);
+        char *key = text + countStringWhiteSpace(strtok(text, ":"));
+        char *value = l->text + strlen(key) + countStringWhiteSpace(l->text) + 2;
 
         i = makeDocNode(key, NULL, value);
         if(!start) {
@@ -52,18 +72,36 @@ docNode* lineToDocNode(line *startLine) {
             current = i;
         }
 
+        if(l->next != NULL && countLineWhiteSpaces(l) > countLineWhiteSpaces(l->next)) {
+            break;
+        } else if(l->next != NULL && countLineWhiteSpaces(l) < countLineWhiteSpaces(l->next)) {
+            current->children = lineToDocNode(l->next);
+
+            // get pointer to the right place
+            do {
+                l = l->next;
+            }
+            while(l->next != NULL && countLineWhiteSpaces(l) >= countLineWhiteSpaces(l->next));
+
+            if(l->next == NULL) {
+                break;
+            } else {
+                continue;
+            }
+        }
+
         l = l->next;
     }
     return start;
 }
 
-// docNode methods
+// docNode method
 
 docNode* makeDocNode(char *key, char *type, char *value) {
     docNode *i = malloc(sizeof(docNode));
-    i->key = strdup(key);
+    i->key = key;
     i->type = NULL;
-    i->value = strdup(value);
+    i->value = value;
     i->children = NULL;
     i->next = NULL;
     return i;
@@ -73,7 +111,14 @@ docNode* makeDocNode(char *key, char *type, char *value) {
 void displayDocNode(docNode *start) {
     docNode *current = start;
     while(current != NULL) {
-        printf("key: %s, value: %s \n", current->key, current->value);
+        printf("key: %s\n", current->key);
+        if(current->children != NULL) {
+            printf("\nchildren of %s:\n\n", current->key);
+            displayDocNode(current->children);
+        } else {
+            printf("value: %s\n", current->value);
+        }
+        printf("\n");
         current = current->next;
     }
 }
@@ -81,27 +126,43 @@ void displayDocNode(docNode *start) {
 void freeDocNode(docNode *start) {
     docNode *current = start;
     while(current != NULL) {
-        free(current->key);
-        free(current->type);
-        free(current->value);
-        free(current->children);
+        if(current->children) {
+            freeDocNode(current->children);
+        }
         docNode *next = current->next;
         free(current);
         current = next;
     }
 }
 
+void tabs(int n) {
+    for(int i = 0; i < n; i++) {
+        printf("\t");
+    }
+}
+
 void toJson(docNode *start) {
+    static int ntabs = 0;
+    ntabs++;
     docNode *i = start;
 
-    printf("{");
+    printf("{\n");
 
     while(i != NULL) {
-        printf("\n\t\"%s\": \"%s\"", i->key, i->value);
+        tabs(ntabs);
+        printf("\"%s\": ", i->key);
+        if(i->children != NULL) {
+            toJson(i->children);
+        } else {
+            printf("\"%s\"", i->value);
+        }
         if(i->next != NULL) {
-            printf(",");
+            printf(",\n");
         }
         i = i->next;
     }
-    printf("\n}\n");
+    printf("\n");
+    tabs(ntabs - 1);
+    printf("}");
+    ntabs--;
 }

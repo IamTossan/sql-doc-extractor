@@ -1,8 +1,11 @@
+
 // extractedDoc
 typedef struct line {
     char *text;
     struct line *next;
 } line;
+
+int countWhiteSpaces(line *l);
 
 line* makeLine(char *text);
 

@@ -41,10 +41,12 @@ int main(int argc, char const *argv[]) {
     }
 
     // displayLines(start);
+    // printf("\n");
 
     docNode *startDocNode = lineToDocNode(start);
     // displayDocNode(startDocNode);
     toJson(startDocNode);
+    printf("\n");
 
     fclose(inputFile);
     freeLines(start);
