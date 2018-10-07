@@ -56,12 +56,18 @@ docNode* lineToDocNode(line *startLine) {
     docNode *i = NULL;
     docNode *parentNode = NULL;
 
+    static int ntabs = 0;
+
     line *l = startLine;
 
     while(l != NULL) {
-        char *text = strdup(l->text);
-        char *key = text + countStringWhiteSpace(strtok(text, ":"));
-        char *value = l->text + strlen(key) + countStringWhiteSpace(l->text) + 2;
+        char *key = strtok(l->text, ":") + ntabs;
+        char *value = strtok(NULL, "\0");
+        if(!value) {
+            value = "";
+        } else {
+            value++;
+        }
 
         i = makeDocNode(key, NULL, value);
         if(!start) {
@@ -75,7 +81,9 @@ docNode* lineToDocNode(line *startLine) {
         if(l->next != NULL && countLineWhiteSpaces(l) > countLineWhiteSpaces(l->next)) {
             break;
         } else if(l->next != NULL && countLineWhiteSpaces(l) < countLineWhiteSpaces(l->next)) {
+            ntabs += 4;
             current->children = lineToDocNode(l->next);
+            ntabs -= 4;
 
             // get pointer to the right place
             do {
