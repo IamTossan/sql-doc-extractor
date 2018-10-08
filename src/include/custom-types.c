@@ -123,7 +123,7 @@ docNode* lineToDocNode(line *startLine) {
 docNode* makeDocNode(char *key, char *type, char *value) {
     docNode *i = malloc(sizeof(docNode));
     i->key = key;
-    i->type = NULL;
+    i->type = type;
     i->value = value;
     i->children = NULL;
     i->next = NULL;
@@ -176,6 +176,14 @@ void toJson(docNode *start) {
         printf("\"%s\": ", i->key);
         if(i->children != NULL) {
             toJson(i->children);
+        } else if(i->type != NULL && strlen(i->type)) {
+            printf("{\n");
+            tabs(ntabs + 1);
+            printf("\"type\": \"%s\",\n", i->type);
+            tabs(ntabs + 1);
+            printf("\"value\": \"%s\"\n", i->value);
+            tabs(ntabs);
+            printf("}");
         } else {
             printf("\"%s\"", i->value);
         }
