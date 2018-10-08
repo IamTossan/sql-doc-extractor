@@ -50,15 +50,13 @@ void freeLines(line *start) {
     }
 }
 
-docNode* lineToDocNode(line *startLine) {
+docNode* lineToDocNode(line *l) {
     docNode *start = NULL;
     docNode *current = NULL;
     docNode *i = NULL;
     docNode *parentNode = NULL;
 
     static int ntabs = 0;
-
-    line *l = startLine;
 
     while(l != NULL) {
         int isTyped = 0;
