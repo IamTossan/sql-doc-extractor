@@ -61,15 +61,30 @@ docNode* lineToDocNode(line *startLine) {
     line *l = startLine;
 
     while(l != NULL) {
-        char *key = strtok(l->text, ":") + ntabs;
+        int isTyped = 0;
+        if(strchr(l->text, '{') && strchr(l->text, '}')) {
+            isTyped = 1;
+        }
+
+        char *keyDelim = isTyped ? "{" : ":";
+        char *key = strtok(l->text, keyDelim) + ntabs;
+
+        char *type = "";
+        if(isTyped) {
+            type = strtok(NULL, "}");
+            if(ntabs) {
+                key[strlen(key) - 1] = '\0';
+            }
+        }
+
         char *value = strtok(NULL, "\0");
         if(!value) {
             value = "";
         } else {
-            value++;
+            isTyped ? value += 2 : value++;
         }
 
-        i = makeDocNode(key, NULL, value);
+        i = makeDocNode(key, type, value);
         if(!start) {
             start = i;
             current = i;
