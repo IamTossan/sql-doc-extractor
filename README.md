@@ -15,10 +15,10 @@ Examples can be found in the test_files folder
 
 ### how it works:
 
-This program detects and extracts documentation in a linked list.
+This program detects and extracts documentation one line at a time in a linked list.
 
-Then the linked list is parsed into nodes.
+Then the linked list is parsed into a binary tree.
 
-Nodes are put together in a linked list fashion.
+Left children are siblings in the JSON hierarchy.
 
-Any node can also have children which is also a linked list of nodes.
+Right children are children in the JSON hierarchy.
