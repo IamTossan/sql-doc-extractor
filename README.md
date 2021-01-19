@@ -2,16 +2,16 @@
 
 ### usage:
 
-compile the program:
-> make
-
-use the program:
-> ./dist/sqlDocExtractor &lt;file&gt;
+```
+make                              compile the program
+./dist/sqlDocExtractor <file>     run the program
+make help                         more infos
+```
 
 ### context:
 
 Originally, this program was created to extract documentation from stored procedures.
-Examples can be found in the test_files folder
+Examples can be found in the test folder
 
 ### how it works:
 
