@@ -2,7 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "include/custom-types.h"
+#include "include/doc_tree.h"
+#include "include/string_linked_list.h"
 
 const char delimiter[9] = "--  ====";
 const int max_line_length = 100;

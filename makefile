@@ -7,7 +7,7 @@ TESTTEMPFOLDER=tmp-test
 
 sqlDocExtractor: src/main.c ## build the project
 	mkdir -p dist
-	$(CC) $(CFLAGS) src/include/custom-types.c src/main.c -o dist/sqlDocExtractor
+	$(CC) $(CFLAGS) src/include/*.c src/main.c -o dist/sqlDocExtractor
 
 help:
 	@echo
