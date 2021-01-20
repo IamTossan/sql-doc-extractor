@@ -6,6 +6,7 @@
 
 const char delimiter[9] = "--  ====";
 const int max_line_length = 100;
+const int base_padding = 4;
 
 int main(int argc, char const *argv[]) {
     if(argc != 2) {
@@ -27,10 +28,10 @@ int main(int argc, char const *argv[]) {
                 break;
             }
             if(!extractedDoc) {
-                extractedDoc = makeLine(line + 4);
+                extractedDoc = makeLine(line + base_padding);
                 start = extractedDoc;
             } else {
-                extractedDoc->next = makeLine(line + 4);
+                extractedDoc->next = makeLine(line + base_padding);
                 extractedDoc = extractedDoc->next;
             }
         }
@@ -40,11 +41,15 @@ int main(int argc, char const *argv[]) {
         }
     }
 
+    // DEBUG
     // displayLines(start);
     // printf("\n");
 
     docNode *startDocNode = lineToDocNode(start);
+
+    // DEBUG
     // displayDocNode(startDocNode);
+
     toJson(startDocNode);
     printf("\n");
 

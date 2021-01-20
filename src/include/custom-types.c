@@ -6,7 +6,7 @@
 
 // extractedDoc methods
 
-int countLineWhiteSpaces(line *l) {
+int getPadding(line *l) {
     int count = 0;
     int i = 0;
     while(l->text[i] == ' ') {
@@ -14,14 +14,6 @@ int countLineWhiteSpaces(line *l) {
         i++;
     }
     return count;
-}
-
-int countStringWhiteSpace(char *s) {
-    int i = 0;
-    while(s[i] == ' ') {
-        i++;
-    }
-    return i;
 }
 
 line* makeLine(char *text) {
@@ -67,7 +59,7 @@ docNode* lineToDocNode(line *l) {
         char *keyDelim = isTyped ? "{" : ":";
         char *key = strtok(l->text, keyDelim) + ntabs;
 
-        char *type = "";
+        char *type = NULL;
         if(isTyped) {
             type = strtok(NULL, "}");
             if(ntabs) {
@@ -91,9 +83,9 @@ docNode* lineToDocNode(line *l) {
             current = i;
         }
 
-        if(l->next != NULL && countLineWhiteSpaces(l) > countLineWhiteSpaces(l->next)) {
+        if(l->next != NULL && getPadding(l) > getPadding(l->next)) {
             break;
-        } else if(l->next != NULL && countLineWhiteSpaces(l) < countLineWhiteSpaces(l->next)) {
+        } else if(l->next != NULL && getPadding(l) < getPadding(l->next)) {
             ntabs += 4;
             current->children = lineToDocNode(l->next);
             ntabs -= 4;
@@ -102,7 +94,7 @@ docNode* lineToDocNode(line *l) {
             do {
                 l = l->next;
             }
-            while(l->next != NULL && countLineWhiteSpaces(l) >= countLineWhiteSpaces(l->next));
+            while(l->next != NULL && getPadding(l) >= getPadding(l->next));
 
             if(l->next == NULL) {
                 break;
@@ -137,6 +129,9 @@ void displayDocNode(docNode *start) {
             printf("\nchildren of %s:\n\n", current->key);
             displayDocNode(current->children);
         } else {
+            if(current->type != NULL) {
+                printf("type: %s\n", current->type);
+            }
             printf("value: %s\n", current->value);
         }
         printf("\n");
