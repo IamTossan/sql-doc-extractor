@@ -1,20 +1,20 @@
 {
-	"Name": "country_hos",
-	"Description": "get infos from countries by continent",
-	"Inputs": {
-		"con": {
-			"type": "char[20]",
-			"value": "continent"
-		}
-	},
-	"Outputs": {
-		"Name": {
-			"type": "varchar[50]",
-			"value": "name of the country"
-		},
-		"HeadOfState": {
-			"type": "int",
-			"value": ""
-		}
-	}
+    "Name": "country_hos",
+    "Description": "get infos from countries by continent",
+    "Inputs": {
+        "con": {
+            "type": "char[20]",
+            "value": "continent"
+        }
+    },
+    "Outputs": {
+        "Name": {
+            "type": "varchar[50]",
+            "value": "name of the country"
+        },
+        "HeadOfState": {
+            "type": "int",
+            "value": ""
+        }
+    }
 }

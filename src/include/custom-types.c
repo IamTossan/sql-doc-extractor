@@ -151,42 +151,48 @@ void freeDocNode(docNode *start) {
     }
 }
 
-void tabs(int n) {
+void printPadding(int n) {
     for(int i = 0; i < n; i++) {
-        printf("\t");
+        printf(" ");
     }
 }
 
-void toJson(docNode *start) {
-    static int ntabs = 0;
-    ntabs++;
+void printJson(docNode *start, int padding, int paddingStep) {
     docNode *i = start;
+    int basePadding = padding + paddingStep;
 
     printf("{\n");
 
     while(i != NULL) {
-        tabs(ntabs);
-        printf("\"%s\": ", i->key);
+
         if(i->children != NULL) {
-            toJson(i->children);
-        } else if(i->type != NULL && strlen(i->type)) {
-            printf("{\n");
-            tabs(ntabs + 1);
+            printPadding(basePadding);
+            printf("\"%s\": ", i->key);
+
+            printJson(i->children, basePadding, paddingStep);
+        } else if(i->type != NULL) {
+            printPadding(basePadding);
+            printf("\"%s\": {\n", i->key);
+
+            printPadding(basePadding + paddingStep);
             printf("\"type\": \"%s\",\n", i->type);
-            tabs(ntabs + 1);
+            printPadding(basePadding + paddingStep);
             printf("\"value\": \"%s\"\n", i->value);
-            tabs(ntabs);
+
+            printPadding(basePadding);
             printf("}");
         } else {
-            printf("\"%s\"", i->value);
+            printPadding(basePadding);
+            printf("\"%s\": \"%s\"", i->key, i->value);
         }
+
         if(i->next != NULL) {
-            printf(",\n");
+            printf(",");
         }
+
+        printf("\n");
         i = i->next;
     }
-    printf("\n");
-    tabs(ntabs - 1);
+    printPadding(padding);
     printf("}");
-    ntabs--;
 }

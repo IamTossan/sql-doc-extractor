@@ -50,7 +50,7 @@ int main(int argc, char const *argv[]) {
     // DEBUG
     // displayDocNode(startDocNode);
 
-    toJson(startDocNode);
+    printJson(startDocNode, 0, 4);
     printf("\n");
 
     fclose(inputFile);

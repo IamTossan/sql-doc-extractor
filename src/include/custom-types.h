@@ -30,4 +30,4 @@ void displayDocNode(docNode *start);
 
 void freeDocNode(docNode *start);
 
-void toJson(docNode *start);
+void printJson(docNode *start, int padding, int paddingStep);

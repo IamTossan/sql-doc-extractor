@@ -1,11 +1,11 @@
 {
-	"Name": "country_hos",
-	"Description": "get infos from countries by continent",
-	"Inputs": {
-		"con": "continent"
-	},
-	"Outputs": {
-		"Name": "name of the country",
-		"HeadOfState": ""
-	}
+    "Name": "country_hos",
+    "Description": "get infos from countries by continent",
+    "Inputs": {
+        "con": "continent"
+    },
+    "Outputs": {
+        "Name": "name of the country",
+        "HeadOfState": ""
+    }
 }
