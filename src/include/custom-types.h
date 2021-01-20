@@ -9,7 +9,7 @@ int countWhiteSpaces(line *l);
 
 line* makeLine(char *text);
 
-void displayLines(line *start);
+void printLines(line *start);
 
 void freeLines(line *start);
 
@@ -24,9 +24,9 @@ typedef struct docNode {
 
 docNode* makeDocNode(char *key, char *type, char *value);
 
-docNode* lineToDocNode(line *startLine);
+docNode* lineToDocNode(line *startLine, int padding);
 
-void displayDocNode(docNode *start);
+void printDocNode(docNode *start);
 
 void freeDocNode(docNode *start);
 

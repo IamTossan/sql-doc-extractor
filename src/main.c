@@ -42,13 +42,13 @@ int main(int argc, char const *argv[]) {
     }
 
     // DEBUG
-    // displayLines(start);
+    // printLines(start);
     // printf("\n");
 
-    docNode *startDocNode = lineToDocNode(start);
+    docNode *startDocNode = lineToDocNode(start, 0);
 
     // DEBUG
-    // displayDocNode(startDocNode);
+    // printDocNode(startDocNode);
 
     printJson(startDocNode, 0, 4);
     printf("\n");

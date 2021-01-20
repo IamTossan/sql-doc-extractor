@@ -4,17 +4,7 @@
 
 #include "custom-types.h"
 
-// extractedDoc methods
-
-int getPadding(line *l) {
-    int count = 0;
-    int i = 0;
-    while(l->text[i] == ' ') {
-        count++;
-        i++;
-    }
-    return count;
-}
+// line
 
 line* makeLine(char *text) {
     line *l = malloc(sizeof(line));
@@ -24,7 +14,7 @@ line* makeLine(char *text) {
     return l;
 }
 
-void displayLines(line *start) {
+void printLines(line *start) {
     line *current = start;
     while(current != NULL) {
         printf("%s\n", current->text);
@@ -42,13 +32,21 @@ void freeLines(line *start) {
     }
 }
 
-docNode* lineToDocNode(line *l) {
+int getPadding(line *l) {
+    int count = 0;
+    int i = 0;
+    while(l->text[i] == ' ') {
+        count++;
+        i++;
+    }
+    return count;
+}
+
+docNode* lineToDocNode(line *l, int padding) {
     docNode *start = NULL;
     docNode *current = NULL;
     docNode *i = NULL;
     docNode *parentNode = NULL;
-
-    static int ntabs = 0;
 
     while(l != NULL) {
         int isTyped = 0;
@@ -57,12 +55,12 @@ docNode* lineToDocNode(line *l) {
         }
 
         char *keyDelim = isTyped ? "{" : ":";
-        char *key = strtok(l->text, keyDelim) + ntabs;
+        char *key = strtok(l->text, keyDelim) + padding;
 
         char *type = NULL;
         if(isTyped) {
             type = strtok(NULL, "}");
-            if(ntabs) {
+            if(padding) {
                 key[strlen(key) - 1] = '\0';
             }
         }
@@ -86,9 +84,7 @@ docNode* lineToDocNode(line *l) {
         if(l->next != NULL && getPadding(l) > getPadding(l->next)) {
             break;
         } else if(l->next != NULL && getPadding(l) < getPadding(l->next)) {
-            ntabs += 4;
-            current->children = lineToDocNode(l->next);
-            ntabs -= 4;
+            current->children = lineToDocNode(l->next, getPadding(l->next));
 
             // get pointer to the right place
             do {
@@ -108,7 +104,7 @@ docNode* lineToDocNode(line *l) {
     return start;
 }
 
-// docNode method
+// docNode
 
 docNode* makeDocNode(char *key, char *type, char *value) {
     docNode *i = malloc(sizeof(docNode));
@@ -121,13 +117,13 @@ docNode* makeDocNode(char *key, char *type, char *value) {
 }
 
 
-void displayDocNode(docNode *start) {
+void printDocNode(docNode *start) {
     docNode *current = start;
     while(current != NULL) {
         printf("key: %s\n", current->key);
         if(current->children != NULL) {
             printf("\nchildren of %s:\n\n", current->key);
-            displayDocNode(current->children);
+            printDocNode(current->children);
         } else {
             if(current->type != NULL) {
                 printf("type: %s\n", current->type);
