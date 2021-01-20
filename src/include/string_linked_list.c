@@ -41,37 +41,39 @@ int getPadding(line *l) {
     return count;
 }
 
-docNode* lineToDocNode(line *l, int padding) {
+docNode* lineToDocNode(char *line, int padding) {
+    int isTyped = 0;
+    if(strchr(line, '{') && strchr(line, '}')) {
+        isTyped = 1;
+    }
+
+    char *keyDelim = isTyped ? "{" : ":";
+    char *key = strtok(line, keyDelim) + padding;
+
+    char *type = NULL;
+    if(isTyped) {
+        type = strtok(NULL, "}");
+        if(padding) {
+            key[strlen(key) - 1] = '\0';
+        }
+    }
+
+    char *value = strtok(NULL, "\0");
+    if(!value) {
+        value = "";
+    } else {
+        isTyped ? value += 2 : value++;
+    }
+
+    return makeDocNode(key, type, value);
+}
+
+docNode* linesToDocNode(line *l, int padding) {
     docNode *start = NULL;
     docNode *current = NULL;
-    docNode *i = NULL;
-    docNode *parentNode = NULL;
 
     while(l != NULL) {
-        int isTyped = 0;
-        if(strchr(l->text, '{') && strchr(l->text, '}')) {
-            isTyped = 1;
-        }
-
-        char *keyDelim = isTyped ? "{" : ":";
-        char *key = strtok(l->text, keyDelim) + padding;
-
-        char *type = NULL;
-        if(isTyped) {
-            type = strtok(NULL, "}");
-            if(padding) {
-                key[strlen(key) - 1] = '\0';
-            }
-        }
-
-        char *value = strtok(NULL, "\0");
-        if(!value) {
-            value = "";
-        } else {
-            isTyped ? value += 2 : value++;
-        }
-
-        i = makeDocNode(key, type, value);
+        docNode *i = lineToDocNode(l->text, padding);
         if(!start) {
             start = i;
             current = i;
@@ -80,16 +82,18 @@ docNode* lineToDocNode(line *l, int padding) {
             current = i;
         }
 
-        if(l->next != NULL && getPadding(l) > getPadding(l->next)) {
+        if(l->next == NULL || getPadding(l) > getPadding(l->next)) {
             break;
-        } else if(l->next != NULL && getPadding(l) < getPadding(l->next)) {
-            current->children = lineToDocNode(l->next, getPadding(l->next));
+        }
+
+        if(getPadding(l) < getPadding(l->next)) {
+            l = l->next;
+            current->children = linesToDocNode(l, getPadding(l));
 
             // get pointer to the right place
-            do {
+            while(l->next != NULL && getPadding(l) >= getPadding(l->next)) {
                 l = l->next;
             }
-            while(l->next != NULL && getPadding(l) >= getPadding(l->next));
 
             if(l->next == NULL) {
                 break;

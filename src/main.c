@@ -46,7 +46,7 @@ int main(int argc, char const *argv[]) {
     // printLines(start);
     // printf("\n");
 
-    docNode *startDocNode = lineToDocNode(start, 0);
+    docNode *startDocNode = linesToDocNode(start, 0);
 
     // DEBUG
     // printDocNode(startDocNode);

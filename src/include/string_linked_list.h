@@ -10,4 +10,6 @@ void printLines(line *start);
 
 void freeLines(line *start);
 
-docNode* lineToDocNode(line *startLine, int padding);
+docNode* lineToDocNode(char *line, int padding);
+
+docNode* linesToDocNode(line *startLine, int padding);
